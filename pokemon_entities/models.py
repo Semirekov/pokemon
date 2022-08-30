@@ -8,3 +8,8 @@ class Pokemon(models.Model):
 
     def __str__(self):
         return f'{self.title}'
+
+class PokemonEntity(models.Model):
+    '''Положение на карте'''
+    lat = models.FloatField('Широта', null=True)
+    lon = models.FloatField('Долгота', null=True)
