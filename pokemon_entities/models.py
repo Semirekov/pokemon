@@ -18,3 +18,5 @@ class PokemonEntity(models.Model):
         null=False,
         verbose_name='Покемон',
         on_delete=models.CASCADE)
+    appeared_at = models.DateTimeField(null=False)
+    disappeared_at = models.DateTimeField(null=True)
