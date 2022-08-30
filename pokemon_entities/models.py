@@ -13,3 +13,8 @@ class PokemonEntity(models.Model):
     '''Положение на карте'''
     lat = models.FloatField('Широта', null=True)
     lon = models.FloatField('Долгота', null=True)
+    pokemon = models.ForeignKey(
+        Pokemon,
+        null=False,
+        verbose_name='Покемон',
+        on_delete=models.CASCADE)
