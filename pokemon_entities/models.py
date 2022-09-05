@@ -8,9 +8,13 @@ class Pokemon(models.Model):
     description = models.TextField('Описание', null=True)
     title_en = models.CharField('Покемон (англ.)', max_length=64, null=False, default='')
     title_jp = models.CharField('Покемон (яп.)', max_length=64, null=False, default='')
-        
+    next_evolution = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    
+
     def __str__(self):
         return f'{self.title}'
+
+
 
 
 class PokemonEntity(models.Model):

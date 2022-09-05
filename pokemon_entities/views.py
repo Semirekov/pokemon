@@ -28,7 +28,7 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
     ).add_to(folium_map)
 
 
-def get_pokemon_photo_absolute_uri(request, pokemon):
+def get_photo_absolute_uri(request, pokemon):
     if pokemon and pokemon.photo:
         return request.build_absolute_uri(pokemon.photo.url)
     
@@ -57,7 +57,7 @@ def show_all_pokemons(request):
             folium_map, 
             entity.lat,
             entity.lon,            
-            get_pokemon_photo_absolute_uri(request, entity.pokemon)
+            get_photo_absolute_uri(request, entity.pokemon)
         )
         
     pokemons_on_page = []
@@ -74,6 +74,31 @@ def show_all_pokemons(request):
     })
 
 
+def get_next_evolution(request, pokemon):    
+    if not pokemon.next_evolution:
+        return   
+    
+    parent = Pokemon.objects.get(id=pokemon.next_evolution.id)
+    return {
+        'title_ru': parent.title,
+        'pokemon_id': parent.id,
+        'img_url': get_photo_absolute_uri(request, parent)
+    }
+
+
+def get_previous_evolution(request, pokemon):    
+    parent = Pokemon.objects.filter(next_evolution=pokemon.id)
+    if parent.count() != 1:
+        return
+    parent = parent.first()
+    
+    return {
+        'title_ru': parent.title,
+        'pokemon_id': parent.id,
+        'img_url': get_photo_absolute_uri(request, parent)
+    }
+
+
 def show_pokemon(request, pokemon_id):
     timenow = localtime()  
     pokemon_entity = PokemonEntity.objects.filter(
@@ -88,7 +113,7 @@ def show_pokemon(request, pokemon_id):
             folium_map, 
             entity.lat,
             entity.lon,
-            get_pokemon_photo_absolute_uri(request, entity.pokemon)
+            get_photo_absolute_uri(request, entity.pokemon)
         )
 
     pokemon = Pokemon.objects.get(id=pokemon_id)
@@ -100,6 +125,8 @@ def show_pokemon(request, pokemon_id):
             'description': pokemon.description,
             'title_en': pokemon.title_en,
             'title_jp': pokemon.title_jp,
+            'next_evolution': get_next_evolution(request, pokemon),
+            'previous_evolution': get_previous_evolution(request, pokemon),
     }
     
 
