@@ -24,7 +24,19 @@
 pip install -r requirements.txt
 ```
 
-Запустите разработческий сервер
+Создайте базу данных 
+
+```sh
+python3 manage.py migrate
+```
+
+Создайте суперпользователя
+
+```sh
+python3 manage.py createsuperuser
+```
+
+Запустите сервер 
 
 ```sh
 python3 manage.py runserver
