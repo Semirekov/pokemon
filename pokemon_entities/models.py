@@ -27,7 +27,7 @@ class Pokemon(models.Model):
     next_evolution = models.ForeignKey(
         'self', 
         verbose_name='Эволюционирует в',
-        related_name='next_stage',
+        related_name='nextstage',
         on_delete=models.SET_NULL, 
         null=True, 
         blank=True
