@@ -1,10 +1,16 @@
 from django.db import models  # noqa F401
 
-# your models here
+
 class Pokemon(models.Model):
     '''Покемон'''
+    
     title = models.CharField('Покемон', max_length=200)
-    photo = models.ImageField(verbose_name='Картинка', upload_to='pokemons', null=True, blank=True,)
+    photo = models.ImageField(
+        verbose_name='Картинка', 
+        upload_to='pokemons', 
+        null=True, 
+        blank=True,
+    )
     description = models.TextField('Описание', null=True, blank=True,)
     title_en = models.CharField(
         'Покемон (англ.)', 
@@ -28,7 +34,6 @@ class Pokemon(models.Model):
         blank=True
     )
     
-
     def __str__(self):
         return self.title
 
@@ -49,4 +54,4 @@ class PokemonEntity(models.Model):
     defence = models.IntegerField('Защита', null=True, blank=True,)
     stamina = models.IntegerField('Выносливость', null=True, blank=True,)
     appeared_at = models.DateTimeField('Появится', null=False)
-    disappeared_at = models.DateTimeField('Исчезнет', null=False)
+    disappeared_at = models.DateTimeField('Исчезнет', null=False)    
