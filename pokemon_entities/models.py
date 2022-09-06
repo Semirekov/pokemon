@@ -16,15 +16,13 @@ class Pokemon(models.Model):
         'Покемон (англ.)', 
         max_length=64, 
         null=True, 
-        blank=True,
-        default=''
+        blank=True
     )
     title_jp = models.CharField(
         'Покемон (яп.)', 
         max_length=64, 
         null=True, 
-        blank=True,
-        default=''
+        blank=True
     )
     next_evolution = models.ForeignKey(
         'self', 
@@ -41,17 +39,16 @@ class Pokemon(models.Model):
 class PokemonEntity(models.Model):
     '''Положение на карте'''    
     pokemon = models.ForeignKey(
-        Pokemon,
-        null=False,
+        Pokemon,        
         verbose_name='Покемон',
         on_delete=models.CASCADE)
 
-    lat = models.FloatField('Широта', null=False)
-    lon = models.FloatField('Долгота', null=False)
+    lat = models.FloatField('Широта',)
+    lon = models.FloatField('Долгота',)
     level = models.IntegerField('Уровень', null=True, blank=True,)
     health = models.IntegerField('Здоровье', null=True, blank=True,)
     strenght = models.IntegerField('Атака', null=True, blank=True,)
     defence = models.IntegerField('Защита', null=True, blank=True,)
     stamina = models.IntegerField('Выносливость', null=True, blank=True,)
-    appeared_at = models.DateTimeField('Появится', null=False)
-    disappeared_at = models.DateTimeField('Исчезнет', null=False)    
+    appeared_at = models.DateTimeField('Появится',)
+    disappeared_at = models.DateTimeField('Исчезнет',)    
