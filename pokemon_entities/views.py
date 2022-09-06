@@ -15,20 +15,6 @@ DEFAULT_IMAGE_URL = (
 )
 
 
-def get_photo_absolute_uri(request, pokemon):
-    if pokemon and pokemon.photo:
-        return request.build_absolute_uri(pokemon.photo.url)
-    
-    return ''
-
-
-def get_pokemon_url(pokemon):
-    if pokemon.photo:
-        return pokemon.photo.url
-    
-    return ''
-
-
 def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
     icon = folium.features.CustomIcon(
         image_url,
@@ -56,15 +42,15 @@ def show_all_pokemons(request):
         add_pokemon(
             folium_map, 
             entity.lat,
-            entity.lon,            
-            get_photo_absolute_uri(request, entity.pokemon)
+            entity.lon,      
+            entity.get_photo_absolute_uri(request)            
         )
         
     pokemons_on_page = []
     for pokemon in pokemons:             
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
-            'img_url': get_pokemon_url(pokemon),
+            'img_url': pokemon.photo.url if pokemon.photo else '',
             'title_ru': pokemon.title
         })
 
@@ -78,7 +64,7 @@ def get_info_evolution(request, pokemon):
     return {
         'title_ru': pokemon.title,
         'pokemon_id': pokemon.id,
-        'img_url': get_photo_absolute_uri(request, pokemon)
+        'img_url': pokemon.photo.url if pokemon.photo else '',  
     }
 
 
@@ -104,7 +90,7 @@ def get_previous_evolution(request, pokemon):
 
 
 def show_pokemon(request, pokemon_id):
-    timenow = localtime()  
+    timenow = localtime()      
     pokemon_entity = PokemonEntity.objects.filter(
         pokemon_id=pokemon_id,
         appeared_at__lt=timenow, 
@@ -117,14 +103,14 @@ def show_pokemon(request, pokemon_id):
             folium_map, 
             entity.lat,
             entity.lon,
-            get_photo_absolute_uri(request, entity.pokemon)
+            entity.get_photo_absolute_uri(request)
         )
 
     pokemon = Pokemon.objects.get(id=pokemon_id)
     
     pokemon = {
             'pokemon_id': pokemon.id,
-            'img_url': get_pokemon_url(pokemon),
+            'img_url': pokemon.photo.url if pokemon.photo else '',
             'title_ru': pokemon.title,
             'description': pokemon.description,
             'title_en': pokemon.title_en,

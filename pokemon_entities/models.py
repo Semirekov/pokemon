@@ -54,3 +54,9 @@ class PokemonEntity(models.Model):
     stamina = models.IntegerField('Выносливость', null=True, blank=True,)
     appeared_at = models.DateTimeField('Появится',)
     disappeared_at = models.DateTimeField('Исчезнет',)    
+
+    def get_photo_absolute_uri(self, request):
+        if self.pokemon and self.pokemon.photo:
+            return request.build_absolute_uri(self.pokemon.photo.url)
+    
+        return ''
