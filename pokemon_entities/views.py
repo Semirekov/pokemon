@@ -15,19 +15,6 @@ DEFAULT_IMAGE_URL = (
 )
 
 
-def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
-    icon = folium.features.CustomIcon(
-        image_url,
-        icon_size=(50, 50),
-    )
-    folium.Marker(
-        [lat, lon],
-        # Warning! `tooltip` attribute is disabled intentionally
-        # to fix strange folium cyrillic encoding bug
-        icon=icon,
-    ).add_to(folium_map)
-
-
 def get_photo_absolute_uri(request, pokemon):
     if pokemon and pokemon.photo:
         return request.build_absolute_uri(pokemon.photo.url)
@@ -40,6 +27,19 @@ def get_pokemon_url(pokemon):
         return pokemon.photo.url
     
     return ''
+
+
+def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
+    icon = folium.features.CustomIcon(
+        image_url,
+        icon_size=(50, 50),
+    )
+    folium.Marker(
+        [lat, lon],
+        # Warning! `tooltip` attribute is disabled intentionally
+        # to fix strange folium cyrillic encoding bug
+        icon=icon,
+    ).add_to(folium_map)
 
 
 def show_all_pokemons(request):
@@ -74,29 +74,33 @@ def show_all_pokemons(request):
     })
 
 
+def get_info_evolution(request, pokemon):
+    return {
+        'title_ru': pokemon.title,
+        'pokemon_id': pokemon.id,
+        'img_url': get_photo_absolute_uri(request, pokemon)
+    }
+
+
 def get_next_evolution(request, pokemon):    
     if not pokemon.next_evolution:
         return   
-    
-    parent = Pokemon.objects.get(id=pokemon.next_evolution.id)
-    return {
-        'title_ru': parent.title,
-        'pokemon_id': parent.id,
-        'img_url': get_photo_absolute_uri(request, parent)
-    }
+        
+    return get_info_evolution(
+        request, 
+        Pokemon.objects.get(id=pokemon.next_evolution.id)
+    )
 
 
 def get_previous_evolution(request, pokemon):    
     parent = Pokemon.objects.filter(next_evolution=pokemon.id)
     if parent.count() != 1:
         return
-    parent = parent.first()
-    
-    return {
-        'title_ru': parent.title,
-        'pokemon_id': parent.id,
-        'img_url': get_photo_absolute_uri(request, parent)
-    }
+
+    return get_info_evolution(
+        request, 
+        parent.first()
+    ) 
 
 
 def show_pokemon(request, pokemon_id):
