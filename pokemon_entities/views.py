@@ -60,7 +60,7 @@ def show_all_pokemons(request):
     })
 
 
-def get_info_evolution(request, pokemon):
+def get_info_evolution(pokemon):
     return {
         'title_ru': pokemon.title,
         'pokemon_id': pokemon.id,
@@ -68,23 +68,21 @@ def get_info_evolution(request, pokemon):
     }
 
 
-def get_next_evolution(request, pokemon):    
+def get_next_evolution(pokemon):    
     if not pokemon.next_evolution:
         return   
         
     return get_info_evolution(
-        request, 
         Pokemon.objects.get(id=pokemon.next_evolution.id)
     )
 
 
-def get_previous_evolution(request, pokemon):    
+def get_previous_evolution(pokemon):    
     parent = Pokemon.objects.filter(next_evolution=pokemon.id)
     if parent.count() != 1:
         return
 
-    return get_info_evolution(
-        request, 
+    return get_info_evolution(        
         parent.first()
     ) 
 

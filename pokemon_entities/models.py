@@ -41,7 +41,7 @@ class PokemonEntity(models.Model):
     '''Положение на карте'''    
     pokemon = models.ForeignKey(
         Pokemon,
-        related_name='pokemons',
+        related_name='entities',
         verbose_name='Покемон',
         on_delete=models.CASCADE)
 
