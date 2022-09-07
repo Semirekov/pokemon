@@ -37,7 +37,7 @@ def show_all_pokemons(request):
         disappeared_at__gt=timenow        
     )
     
-    for entity in pokemon_entity:        
+    for entity in pokemon_entity:
         
         add_pokemon(
             folium_map, 
@@ -68,29 +68,11 @@ def get_info_evolution(pokemon):
     }
 
 
-def get_next_evolution(pokemon):    
-    if not pokemon.next_evolution:
-        return   
-        
-    return get_info_evolution(
-        Pokemon.objects.get(id=pokemon.next_evolution.id)
-    )
-
-
-def get_previous_evolution(pokemon):    
-    parent = Pokemon.objects.filter(next_evolution=pokemon.id)
-    if parent.count() != 1:
-        return
-
-    return get_info_evolution(        
-        parent.first()
-    ) 
-
-
 def show_pokemon(request, pokemon_id):
-    timenow = localtime()      
-    pokemon_entity = PokemonEntity.objects.filter(
-        pokemon_id=pokemon_id,
+    timenow = localtime()   
+    pokemon = Pokemon.objects.get(id=pokemon_id)
+
+    pokemon_entity =  pokemon.entities.filter(        
         appeared_at__lt=timenow, 
         disappeared_at__gt=timenow        
     )
@@ -103,21 +85,38 @@ def show_pokemon(request, pokemon_id):
             entity.lon,
             entity.get_photo_absolute_uri(request)
         )
-
-    pokemon = Pokemon.objects.get(id=pokemon_id)
     
-    pokemon = {
+    next_evolution = {}
+    if pokemon.next_evolution:
+        next_stage = Pokemon.objects.get(id=pokemon.next_evolution.id)
+        next_evolution = {
+            'title_ru': next_stage.title,
+            'pokemon_id': next_stage.id,
+            'img_url': next_stage.photo.url if next_stage.photo else '',  
+        }
+
+    prev_evolution = {}    
+    prevstages = Pokemon.objects.filter(next_evolution=pokemon.id)    
+    if prevstages.count() == 1:            
+        prevstage = prevstages.first()
+        prev_evolution = {
+            'title_ru': prevstage.title,
+            'pokemon_id': prevstage.id,
+            'img_url': prevstage.photo.url if prevstage.photo else '',  
+        }
+
+    pokemon_info = {
             'pokemon_id': pokemon.id,
             'img_url': pokemon.photo.url if pokemon.photo else '',
             'title_ru': pokemon.title,
             'description': pokemon.description,
             'title_en': pokemon.title_en,
             'title_jp': pokemon.title_jp,
-            'next_evolution': get_next_evolution(request, pokemon),
-            'previous_evolution': get_previous_evolution(request, pokemon),
+            'next_evolution': next_evolution, 
+            'previous_evolution': prev_evolution 
     }
     
 
     return render(request, 'pokemon.html', context={
-        'map': folium_map._repr_html_(), 'pokemon': pokemon
+        'map': folium_map._repr_html_(), 'pokemon': pokemon_info
     })

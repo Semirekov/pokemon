@@ -7,21 +7,18 @@ class Pokemon(models.Model):
     title = models.CharField('Покемон', max_length=200)
     photo = models.ImageField(
         verbose_name='Картинка', 
-        upload_to='pokemons', 
-        null=True, 
+        upload_to='pokemons',         
         blank=True,
     )
-    description = models.TextField('Описание', null=True, blank=True,)
+    description = models.TextField('Описание', blank=True,)
     title_en = models.CharField(
         'Покемон (англ.)', 
-        max_length=64, 
-        null=True, 
+        max_length=64,         
         blank=True
     )
     title_jp = models.CharField(
         'Покемон (яп.)', 
-        max_length=64, 
-        null=True, 
+        max_length=64,         
         blank=True
     )
     next_evolution = models.ForeignKey(
